@@ -108,9 +108,8 @@ jobs:
         [ $OP_TARGET = N1 ] && for i in $(ls | grep rootfs);do mv $i "openwrt-${VERSION#*_}-${DEVICE_NAME#*_}.${i#*.}";done || [ $OP_TARGET != MI-AC2100 -a $OP_TARGET != REDMI-AC2100 -a $OP_TARGET != CR660X ] && for i in $(ls | grep squashfs);do mv $i "openwrt-${VERSION#*_}-${DEVICE_NAME#*_}-$(echo $i | grep -o squashfs-*.*)";done
         [ $OP_TARGET = MI-AC2100 -o $OP_TARGET = REDMI-AC2100 ] && find ! -name '*breed*' ! -name '*sysupgrade*' ! -name '.' | xargs rm -rf && for i in $(ls);do mv $i "openwrt-${VERSION#*_}-${DEVICE_NAME#*_}-$(echo $i | grep -o squashfs-*.*)";done
         [ $OP_TARGET = CR660X ] && find ! -name '*factory*' ! -name '*sysupgrade*' ! -name '.' | xargs rm -rf && for i in $(ls);do mv $i "openwrt-${VERSION#*_}-${DEVICE_NAME#*_}-$(echo $i | grep -o squashfs-*.*)";done
-        echo "IP:10.0.0.1" > "默認IP與sha256.txt"
-        echo "" >> "默認IP與sha256.txt"
-        sha256sum openwrt* >> "默認IP與sha256.txt"
+        echo -e "IP:10.0.0.1\n初始密碼:$OP_PASS\n\nSHA256:" > "初始IP密碼與sha256.txt"
+        sha256sum openwrt* >> "初始IP密碼與sha256.txt"
         find ../../../packages/*/packages -maxdepth 1 -name 'dockerd*' -type f | xargs -i cp {} $PWD
         [ "$(cat ../../../../DEVICE_NAME)" = phicomm_k2p ] && cp ../../../packages/*/base/xray* $PWD && cp ../../../packages/*/packages/xray* $PWD
         mkdir -p $(echo $OP_TARGET | sed -e 's/REDMI-AC2100/Redmi-AC2100/' -e 's/MI-AC2100/Mi-AC2100/')/${VERSION#*_}
