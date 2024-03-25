@@ -149,3 +149,12 @@ jobs:
       continue-on-error: true
       run: |
         curl -m 9 --retry 3 -Ssd "message=%0aOpenWrt_firmware$DEVICE_NAME$VERSION$FILE_DATE $([ "${{steps.compile.outputs.status}}" = success ] && echo 編譯成功 || echo 編譯失敗)" -H "Authorization: Bearer $LINE_Token" https://notify-api.line.me/api/notify >/dev/null
+
+    - name: Telegram notification
+      env:
+        TG_ID: ${{secrets.TG_ID}}
+        TG_KEY: ${{secrets.TG_KEY}}
+      if: env.TG_ID && env.TG_KEY && !cancelled()
+      continue-on-error: true
+      run: |
+        curl -m 9 --retry 3 -Ssd "chat_id=$TG_ID&text=OpenWrt_firmware$DEVICE_NAME$VERSION$FILE_DATE $([ "${{steps.compile.outputs.status}}" = success ] && echo 編譯成功 || echo 編譯失敗)" https://api.telegram.org/bot$TG_KEY/sendMessage >/dev/null
